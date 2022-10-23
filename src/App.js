@@ -35,7 +35,7 @@ function App() {
   const [firstValue, setFirstValue] = useState("");
   const [secondValue, setSecondValue] = useState("");
   const [operator, setOperator] = useState(null);
-  const [result, setResult] = useState(0);
+  const [, setResult] = useState(0);
 
   const handleBtnfn = (value) => {
     // if (!isNaN(+value) && !operator) {
@@ -92,11 +92,14 @@ function App() {
           break;
         case "/":
           temResult = +firstValue / +secondValue;
+          break;
         case "%":
           temResult =
             +firstValue - Math.floor(+firstValue / +secondValue) * secondValue;
           //temResult = +firstValue % +secondValue;
           break;
+        default:
+          throw new Error("this operator doesnt exist.");
       }
       setResult(temResult);
       setFirstValue(temResult);
