@@ -29,24 +29,53 @@ const calculatorBtns = [
   { value: "=", bgColor: "bg-primary-300", textColor: "text-primary-100" }
 ];
 
-const operatorArr = ["+", "-", "*", "/"];
+const operatorArr = ["+", "-", "*", "/", "%"];
 
 function App() {
-  const [firstValue, setFirstValue] = useState(null);
-  const [secondValue, setSecondValue] = useState(null);
+  const [firstValue, setFirstValue] = useState("");
+  const [secondValue, setSecondValue] = useState("");
   const [operator, setOperator] = useState(null);
   const [result, setResult] = useState(0);
 
   const handleBtnfn = (value) => {
-    if (!firstValue && !isNaN(+value)) {
-      setFirstValue(value);
-      setResult(0);
+    // if (!isNaN(+value) && !operator) {
+    //   let tempValue = (firstValue == null ? "" : firstValue) + value;
+    //   setFirstValue(+tempValue);
+    //   setResult(0);
+    // }
+
+    // if (
+    //   firstValue &&
+    //   (firstValue + value).match(/\./g).length === 1 &&
+    //   !operator
+    // ) {
+    //   let tempValue = firstValue + value;
+    //   const nbrAfterPoint = tempValue.split(".");
+    //   if (!isNaN(+nbrAfterPoint[1])) {
+    //     console.log(+nbrAfterPoint[1]);
+    //     setFirstValue(firstValue + value);
+    //   }
+    // }
+
+    if (!isNaN(+(firstValue + value)) && !operator) {
+      console.log(firstValue + value);
+      setFirstValue(firstValue + value);
     }
-    if (firstValue && !operator && operatorArr.includes(value)) {
+
+    if (firstValue && value === "+-" && !operator) {
+      setFirstValue(-firstValue);
+    }
+
+    if (firstValue && operatorArr.includes(value)) {
+      setResult(0);
       setOperator(value);
     }
-    if (operator && !secondValue && !isNaN(+value)) {
-      setSecondValue(value);
+    if (operator && !isNaN(+(secondValue + value))) {
+      setSecondValue(secondValue + value);
+    }
+
+    if (secondValue && value === "+-") {
+      setSecondValue(-secondValue);
     }
 
     if (value === "=") {
@@ -63,17 +92,21 @@ function App() {
           break;
         case "/":
           temResult = +firstValue / +secondValue;
+        case "%":
+          temResult =
+            +firstValue - Math.floor(+firstValue / +secondValue) * secondValue;
+          //temResult = +firstValue % +secondValue;
           break;
       }
       setResult(temResult);
-      setFirstValue(null);
-      setSecondValue(null);
+      setFirstValue(temResult);
+      setSecondValue("");
       setOperator(null);
     }
     if (value === "C") {
       setResult(0);
-      setFirstValue(null);
-      setSecondValue(null);
+      setFirstValue("");
+      setSecondValue("");
       setOperator(null);
     }
   };
@@ -81,8 +114,16 @@ function App() {
     <Fragment>
       <Container>
         <CalculatorWrapper>
-          {firstValue} {operator} {secondValue} = {result}
-          <CalculatorScreen>{result}</CalculatorScreen>
+          <CalculatorScreen>
+            {firstValue === ""
+              ? 0
+              : firstValue < 0
+              ? secondValue === ""
+                ? firstValue
+                : `(${firstValue})`
+              : firstValue}
+            {operator} {secondValue < 0 ? `(${secondValue})` : secondValue}
+          </CalculatorScreen>
           <CalculatorButtons>
             {calculatorBtns.map((btn, index) => {
               const bgColor = btn.bgColor ? btn.bgColor : undefined;

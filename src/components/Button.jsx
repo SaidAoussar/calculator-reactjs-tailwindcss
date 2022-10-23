@@ -4,7 +4,6 @@ const Button = ({
   handleBtnfn,
   children
 }) => {
-  console.log(bgColor, textColor);
   return (
     <button
       className={`py-5 ${bgColor} ${textColor} text-4xl`}
